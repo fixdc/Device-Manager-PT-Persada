@@ -9,6 +9,7 @@ Route::get('/', function () {
 Route::get('/login', function () {
     return view('login');
 });
+Route::view('/kelola-user', 'kelola_user.kelola_user')->name('kelola.user');
 Route::get('/device', function () {
     return view('device_details');
 });
