@@ -1,70 +1,55 @@
 @extends('layouts.index')
 
 @section('content')
-    <div class="bg-[#F8F9FA] min-h-screen flex flex-col items-center justify-center p-4 antialiased text-gray-900">
+<div class="relative min-h-screen bg-[#FDFDFD] flex flex-col font-sans text-gray-900 overflow-hidden">
+    
+    <!-- Background Shape (Visual Effect) -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <div class="w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] bg-[#14274E] rounded-[2rem] sm:rounded-[3rem] rotate-60 opacity-90 scale-90 sm:scale-100 transition-transform"></div>
+    </div>
+    <!-- Main Card Container -->
+    <div class="relative z-10 flex-1 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.08)] p-8 sm:p-10 w-full max-w-[440px]">
+            
+            <h1 class="text-[22px] font-bold text-center text-gray-900 mb-8">Masuk Ke Akunmu</h1>
+            <!-- Form -->
+            <form method="POST" action="" class="space-y-5">
+                @csrf
 
-        <div class="w-full max-w-md flex flex-col gap-6">
-
-            <!-- Tombol Back -->
-            <div>
-                <a href="#"
-                    class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                    </svg>
-                    Kembali
-                </a>
-            </div>
-
-            <!-- Card Login -->
-            <div class="bg-white rounded-4xl shadow-[0_2px_40px_rgb(0,0,0,0.04)] p-10 w-full">
-                <div class="text-center mb-8">
-                    <h1 class="text-[26px] font-semibold tracking-tight text-gray-900">Selamat Datang</h1>
-                    <p class="text-sm text-gray-500 mt-2">Silakan masuk menggunakan kredensial Anda.</p>
+                <!-- Email Input -->
+                <div>
+                    <label for="email" class="block text-xs font-bold text-gray-700 mb-2 ml-1">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" name="email" id="email" placeholder="refero.design.team@gmail.com" 
+                        class="w-full px-5 py-3.5 rounded-full border border-gray-100 bg-white focus:border-[#6F75FF] focus:ring-1 focus:ring-[#6F75FF] outline-none transition-all text-sm text-gray-800 shadow-sm placeholder:text-gray-400">
                 </div>
 
-                <form method="POST" action="" class="space-y-5">
-                    @csrf
+                <!-- Password Input -->
+                <div>
+                    <label for="password" class="block text-xs font-bold text-gray-700 mb-2 ml-1">
+                        Kata Sandi <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" name="password" id="password" placeholder="••••••••••••••••"
+                        class="w-full px-5 py-3.5 rounded-full border border-gray-100 bg-white focus:border-[#6F75FF] focus:ring-1 focus:ring-[#6F75FF] outline-none transition-all text-sm text-gray-800 shadow-sm placeholder:text-gray-400">
+                </div>
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" name="email" id="email"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-all text-sm">
-                    </div>
-
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Kata Sandi</label>
-                        <input type="password" name="password" id="password"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-all text-sm">
-                    </div>
-
-                    <div class="flex items-center justify-between pt-2 pb-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="remember"
-                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600 focus:ring-2">
-                            <span class="text-sm font-medium text-gray-600">Ingat saya</span>
-                        </label>
-
-                        <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
-                            Lupa kata sandi?
-                        </a>
-                    </div>
-
-                    <button type="submit"
-                        class="w-full bg-[#1D4ED8] hover:bg-blue-800 text-white font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 active:scale-[0.98]">
+                <!-- Sign In Submit -->
+                <div class="pt-3">
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-[#14274E] hover:bg-[#161835] text-white font-semibold py-3.5 px-4 rounded-full transition-all duration-200 shadow-[0_8px_20px_rgba(111,117,255,0.3)]">
                         Masuk
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
-                </form>
-            </div>
+                </div>
 
-            <!-- Footer Text -->
-            <div class="text-center">
-                <p class="text-sm font-medium text-gray-500">
-                    Dinas Sosial Kota Tanggerang Selatan 2026
-                </p>
-            </div>
+                <!-- Forgot Password Link -->
+                <div class="mt-4">
+                    <a href="#" class="text-xs font-medium text-[#14274E] hover:text-[#5A60E5] transition-colors ml-1">
+                        Lupa Kata Sandi?
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 @endsection
