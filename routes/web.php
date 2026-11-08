@@ -17,6 +17,12 @@ Route::get('/device', function () {
 Route::get('/create-ticket', function () {
     return view('users.create-ticket');
 });
+Route::get('/mydevice', function () {
+    return view('users.device');
+});
+Route::get('/myticket', function () {
+    return view('users.ticket');
+});
 
 
 
