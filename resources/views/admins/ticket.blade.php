@@ -16,6 +16,11 @@
         ['id' => 'tc-006', 'ticketCode' => '#TC-006', 'subject' => 'Nigerundayo!!!',                                       'deviceId' => 'CAM-PPPB-001',   'type' => 'Problem',    'urgency' => 'Mendesak', 'priorityLevel' => 'Urgent', 'status' => 'DALAM_PENGERJAAN', 'createdAt' => now()->subDays(6)->toIso8601String(),   'reporterName' => 'Fikri',         'department' => 'Security'],
     ];
 
+    // URL halaman detail. Sementara semua baris menuju halaman yang sama (belum terhubung ke database).
+    // Nanti: url('/admin/ticket/__ID__') atau route('admin.tickets.show', ['ticket' => '__ID__']),
+    // lalu aktifkan baris .replace('__ID__', ...) di fungsi detailUrl().
+    $detailUrl = url('/admin/ticket/detail');
+
     // Path ikon (Heroicons outline)
     $ic = [
         'ticket'    => 'M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z',
@@ -47,7 +52,7 @@
     $columns = ['ticketCode' => 'ID Tiket', 'subject' => 'Subjek', 'deviceId' => 'ID Perangkat', 'type' => 'Jenis', 'urgency' => 'Urgensi'];
 @endphp
 
-<div x-data="ticketsPage(@js($tickets))"
+<div x-data="ticketsPage(@js($tickets), @js($detailUrl))"
      @keydown.escape.window="modal = null; menu = null; openDd = null; sidebarOpen = false"
      class="flex h-screen overflow-hidden bg-[#fafafa] text-slate-800">
 
@@ -161,13 +166,18 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
                             <template x-for="t in pageRows" :key="t.id">
-                                <tr class="transition-colors" :class="selected.includes(t.id) ? 'bg-[#f1f5fb]' : 'hover:bg-slate-50/70'">
-                                    <td class="py-4 pl-6 pr-2">
+                                <tr class="cursor-pointer transition-colors" @click="goDetail(t)"
+                                    :class="selected.includes(t.id) ? 'bg-[#f1f5fb]' : 'hover:bg-slate-50/70'">
+                                    <td class="py-4 pl-6 pr-2" @click.stop>
                                         <x-ticket.checkbox x-bind:checked="selected.includes(t.id)"
                                                     x-on:change="toggle(t.id)"
                                                     x-bind:aria-label="'Pilih tiket ' + t.ticketCode" />
                                     </td>
-                                    <td class="whitespace-nowrap px-4 py-4 font-bold text-slate-900" x-text="t.ticketCode"></td>
+                                    <td class="whitespace-nowrap px-4 py-4 font-bold text-slate-900">
+                                        {{-- Link asli: bisa di-klik tengah / buka di tab baru, dan terbaca keyboard & screen reader --}}
+                                        <a :href="detailUrl(t)" @click.stop x-text="t.ticketCode"
+                                           class="rounded transition-colors hover:text-[#10254a] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#10254a]/40"></a>
+                                    </td>
                                     <td class="max-w-[260px] truncate px-4 py-4 text-slate-700" x-text="t.subject" :title="t.subject"></td>
                                     <td class="whitespace-nowrap px-4 py-4 text-slate-600" x-text="t.deviceId"></td>
                                     <td class="whitespace-nowrap px-4 py-4 font-semibold text-slate-800" x-text="t.type"></td>
@@ -177,7 +187,7 @@
                                             <span x-text="t.urgency"></span>
                                         </span>
                                     </td>
-                                    <td class="py-4 pl-2 pr-6 text-right">
+                                    <td class="py-4 pl-2 pr-6 text-right" @click.stop>
                                         <button type="button" @click.stop="openMenu($event, t)" aria-haspopup="menu"
                                                 :aria-expanded="menu && menu.id === t.id"
                                                 :aria-label="'Opsi tiket ' + t.ticketCode"
@@ -284,7 +294,7 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('ticketsPage', (initialTickets) => ({
+        Alpine.data('ticketsPage', (initialTickets, detailUrlBase) => ({
             sidebarOpen: false,
             tickets: initialTickets,
 
@@ -410,7 +420,9 @@
             },
 
             // ---------- Aksi (frontend saja, sambungkan ke route backend nanti) ----------
-            viewTicket(t) { this.toast(`Lihat detail ${t.ticketCode}: sambungkan ke route detail tiket.`); },
+            detailUrl(t)  { return detailUrlBase; /* nanti: detailUrlBase.replace('__ID__', encodeURIComponent(t.id)) */ },
+            goDetail(t)   { window.location.href = this.detailUrl(t); },
+            viewTicket(t) { this.goDetail(t); },
             editTicket(t) { this.toast(`Edit ${t.ticketCode}: sambungkan ke route edit tiket.`); },
             bulkEdit() {
                 const t = this.tickets.find(x => x.id === this.selected[0]);
