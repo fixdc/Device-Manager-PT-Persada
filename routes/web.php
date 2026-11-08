@@ -40,3 +40,7 @@ Route::get('/admin/dashboard', function () {
 Route::get('/admin/user', function () {
     return view('admins.user');
 });
+
+Route::get('/admin/history', function () {
+    return view('admins.history');
+});
