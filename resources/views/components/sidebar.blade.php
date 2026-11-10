@@ -25,17 +25,16 @@
 
     $menusByRole = [
         'admin' => [
-            ['key' => 'dashboard', 'label' => 'Dashboard',         'href' => '#', 'icon' => $icons['dashboard']],
-            ['key' => 'device',    'label' => 'Kelola Device',     'href' => '#', 'icon' => $icons['device']],
-            ['key' => 'user',      'label' => 'Kelola User',       'href' => '#', 'icon' => $icons['user']],
-            ['key' => 'ticket',    'label' => 'Kelola Ticket',     'href' => '#', 'icon' => $icons['ticket']],
-            ['key' => 'riwayat',   'label' => 'Riwayat Kerusakan', 'href' => '#', 'icon' => $icons['history']],
+            ['key' => 'dashboard', 'label' => 'Dashboard',         'href' => '/admin/dashboard', 'icon' => $icons['dashboard']],
+            ['key' => 'device',    'label' => 'Kelola Device',     'href' => '/admin/device', 'icon' => $icons['device']],
+            ['key' => 'user',      'label' => 'Kelola User',       'href' => '/admin/user', 'icon' => $icons['user']],
+            ['key' => 'ticket',    'label' => 'Kelola Ticket',     'href' => '/admin/ticket', 'icon' => $icons['ticket']],
+            ['key' => 'riwayat',   'label' => 'Riwayat Kerusakan', 'href' => '/admin/history', 'icon' => $icons['history']],
         ],
         'user' => [
-            ['key' => 'dashboard', 'label' => 'Dashboard',       'href' => '#', 'icon' => $icons['dashboard']],
-            ['key' => 'perangkat', 'label' => 'Perangkat saya',  'href' => '#', 'icon' => $icons['device']],
-            ['key' => 'tiket',     'label' => 'Tiket Saya',      'href' => '#', 'icon' => $icons['ticket']],
-            ['key' => 'buat',      'label' => 'Buat Tiket',      'href' => '#', 'icon' => $icons['plus']],
+            ['key' => 'dashboard', 'label' => 'Dashboard',       'href' => '/dashboard', 'icon' => $icons['dashboard']],
+            ['key' => 'perangkat', 'label' => 'Perangkat saya',  'href' => '/mydevice', 'icon' => $icons['device']],
+            ['key' => 'tiket',     'label' => 'Tiket Saya',      'href' => '/myticket', 'icon' => $icons['ticket']],
         ],
     ];
 
@@ -91,7 +90,7 @@
         </div>
         <h4 class="text-base font-bold leading-tight">Scan<br>QR Perangkat</h4>
         <p class="mt-2 text-[11px] leading-relaxed text-slate-300">Pindai kode QR untuk melihat informasi detail perangkat dan riwayat perbaikannya dengan mudah.</p>
-        <button type="button" class="mt-4 w-full rounded-md bg-white/15 py-2 text-xs font-medium transition-colors hover:bg-white/25">
+        <button type="button" @click="$dispatch('open-qr-scan'); sidebarOpen = false" class="mt-4 w-full rounded-md bg-white/15 py-2 text-xs font-medium transition-colors hover:bg-white/25">
             Mulai Scan QR
         </button>
     </div>

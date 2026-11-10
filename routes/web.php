@@ -14,7 +14,7 @@ Route::get('/device', function () {
 });
 
 // AUTH USER
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function () { //
     return view('users.dashboard');
 });
 Route::get('/create-ticket', function () {
@@ -26,10 +26,9 @@ Route::get('/mydevice', function () {
 Route::get('/myticket', function () {
     return view('users.ticket');
 });
-Route::get('/ticket', function () {
+Route::get('/detail-ticket', function () { //
     return view('users.ticket-detail');
 });
-
 
 
 
