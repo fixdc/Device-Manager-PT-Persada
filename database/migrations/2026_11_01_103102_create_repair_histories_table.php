@@ -9,24 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('repair_histories', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('device_id')->constrained('devices')->cascadeOnDelete();
-            $table->foreignId('ticket_id')->nullable()->constrained('tickets')->nullOnDelete();
-            $table->foreignId('technician_id')->constrained('users')->cascadeOnDelete();
-            $table->text('action_taken');
-            $table->dateTime('repair_date');
-            $table->timestamps();
-        });
-    }
+public function up(): void
+{
+    Schema::create('repair_histories', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('id_ticket')->unique()->constrained('tickets')->cascadeOnDelete();
+        $table->text('tindakan')->nullable();
+        $table->dateTime('tanggal_selesai')->nullable();
+        $table->timestamps();
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('repair_histories');
-    }
+public function down(): void
+{
+    Schema::dropIfExists('repair_histories');
+}
 };

@@ -13,20 +13,18 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('device_code')->unique();
-            $table->string('device_name');
-            $table->string('category');
-            $table->text('specification')->nullable();
-            $table->enum('status', ['aktif', 'perbaikan', 'rusak', 'tidak_aktif']);
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('location_id')->nullable()->constrained('locations')->nullOnDelete();
+            $table->string('kode_device')->unique(); // JenisBarang-Departemen-NoRandom
+            $table->string('nama_device');
+            $table->foreignId('id_kategori')->constrained('device_categories');
+            $table->string('nomor_seri')->nullable()->unique();
+            $table->enum('status', ['aktif', 'perbaikan', 'rusak'])->default('aktif');
+            $table->text('deskripsi')->nullable();
+            $table->foreignId('id_user')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('id_departemen')->constrained('departments');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('devices');
