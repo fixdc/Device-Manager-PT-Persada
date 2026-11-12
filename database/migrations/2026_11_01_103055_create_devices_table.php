@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('kode_device')->unique(); // JenisBarang-Departemen-NoRandom
             $table->string('nama_device');
+            $table->string('model')->nullable();
+            $table->string('merek')->nullable();
             $table->foreignId('id_kategori')->constrained('device_categories');
             $table->string('nomor_seri')->nullable()->unique();
             $table->enum('status', ['aktif', 'perbaikan', 'rusak'])->default('aktif');
             $table->text('deskripsi')->nullable();
+            $table->datetime('tanggal_pengadaan')->nullable();
             $table->foreignId('id_user')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('id_departemen')->constrained('departments');
             $table->timestamps();

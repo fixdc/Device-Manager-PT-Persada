@@ -17,4 +17,10 @@ class Department extends Model
     {
         return $this->hasMany(User::class, 'id_departemen');
     }
+
+    // Tambahan relasi ke tabel devices (Location)
+    public function devices(): HasMany
+    {
+        return $this->hasMany(Device::class, 'id_departemen');
+    }
 }
