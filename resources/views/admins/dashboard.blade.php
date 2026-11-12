@@ -2,11 +2,7 @@
 
 @section('content')
 @php
-    /*
-     * DATA DUMMY (frontend only).
-     * Nanti ganti dengan data dari controller.
-     */
-    $adminName = 'Admin';
+    $adminName = $adminName ?? 'Admin';
 
     // Path ikon (Heroicons outline)
     $ic = [
@@ -21,63 +17,48 @@
         'eye'     => 'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
     ];
 
-    // Kartu statistik: [label, jumlah, keterangan, ikon]
+    // Kartu statistik dari Database
     $stats = [
-        ['Total Perangkat',   1200, 'Seluruh perangkat terdaftar', 'monitor'],
-        ['Total User',        1200, 'Jumlah user terdaftar',       'users'],
-        ['Total Tiket',       1200, 'Seluruh tiket masuk',         'ticket'],
-        ['Tiket Pending',     1200, 'Tiket belum ditangani',       'clock'],
-        ['Sedang Diperbaiki', 1200, 'Tiket dalam proses perbaikan','wrench'],
+        ['Total Perangkat',   $totalPerangkat ?? 0, 'Seluruh perangkat terdaftar', 'monitor'],
+        ['Total User',        $totalUser ?? 0, 'Jumlah user terdaftar',       'users'],
+        ['Total Tiket',       $totalTiket ?? 0, 'Seluruh tiket masuk',         'ticket'],
+        ['Tiket Pending',     $tiketPending ?? 0, 'Tiket belum ditangani',       'clock'],
+        ['Sedang Diperbaiki', $tiketProses ?? 0, 'Tiket dalam proses perbaikan','wrench'],
     ];
 
-    // Donut: kondisi perangkat
+    // Donut kondisi perangkat dari Database
     $kondisi = [
-        ['label' => 'Baik',      'value' => 900, 'color' => '#e6edf5'],
-        ['label' => 'Perbaikan', 'value' => 300, 'color' => '#66779b'],
-        ['label' => 'Rusak',     'value' => 190, 'color' => '#10254a'],
+        ['label' => 'Baik',      'value' => $kondisiBaik ?? 0, 'color' => '#e6edf5'],
+        ['label' => 'Perbaikan', 'value' => $kondisiPerbaikan ?? 0, 'color' => '#66779b'],
+        ['label' => 'Rusak',     'value' => $kondisiRusak ?? 0, 'color' => '#10254a'],
     ];
     $kondisiTotal = collect($kondisi)->sum('value');
     $circ = 2 * pi() * 40;
 
-    // Bar chart: statistik tiket per bulan (batang abu = total, batang navy = selesai)
+    // Statistik Tiket per Bulan (Contoh mapping dinamis/fallback)
     $chartMax = 350;
     $chart = [
-        ['Jan', 340, 290], ['Feb', 270, 215], ['Mar', 300, 262],
-        ['Apr', 345, 215], ['Mei', 290, 150], ['Jun', 340, 285],
+        ['Jan', 40, 20], ['Feb', 50, 30], ['Mar', 60, 45],
+        ['Apr', 80, 60], ['Mei', 90, 75], ['Jun', 120, 100],
     ];
 
     $akses = [
-        ['Tambah Device', 'Daftarkan perangkat baru', 'plus',    '#'],
-        ['Tambah User',   'Buat akun pengguna baru',   'userAdd', '#'],
-        ['Kelola Ticket', 'Periksa laporan kerusakan', 'ticket',  '#'],
+        ['Tambah Device', 'Daftarkan perangkat baru', 'plus',    route('admin.device.index')],
+        ['Tambah User',   'Buat akun pengguna baru',   'userAdd', route('admin.user.index')],
+        ['Kelola Ticket', 'Periksa laporan kerusakan', 'ticket',  route('admin.tickets.index')],
     ];
 
-    // Tiket terbaru
+    // Warna status tiket
     $statusDot = [
-        'Pending'  => ['text-red-600',    'bg-red-500'],
-        'Diproses' => ['text-yellow-500', 'bg-yellow-400'],
-        'Selesai'  => ['text-green-600',  'bg-green-500'],
-    ];
-    $tiketBaru = [
-        ['#TC-001', 'PC Kantor',   'Andi', 'Pending'],
-        ['#TC-002', 'Printer',     'Siti', 'Diproses'],
-        ['#TC-003', 'AC Ruangan',  'Budi', 'Selesai'],
-        ['#TC-004', 'Laptop',      'Rina', 'Pending'],
-        ['#TC-005', 'Hp',          'Dewi', 'Diproses'],
+        'pending'  => ['text-red-600',    'bg-red-500'],
+        'diproses' => ['text-yellow-500', 'bg-yellow-400'],
+        'selesai'  => ['text-green-600',  'bg-green-500'],
     ];
 
-    // Riwayat kerusakan
     $statusPill = [
-        'Selesai'  => 'bg-green-200 text-green-800',
-        'Diproses' => 'bg-yellow-300 text-yellow-900',
-        'Pending'  => 'bg-rose-400 text-white',
-    ];
-    $riwayat = [
-        ['#TC-001', '03 Nov 2025, 14:30', 'ASUS ROG',   'Layar berkedip',     'Selesai'],
-        ['#TC-002', '01 Nov 2025, 09:15', 'Epson L3310','Tidak bisa ngeprint','Diproses'],
-        ['#TC-003', '28 Okt 2025, 16:20', 'PC Server',  'Restart sendiri',    'Selesai'],
-        ['#TC-004', '25 Okt 2025, 11:10', 'Monitor LG', 'Layar gelap',        'Pending'],
-        ['#TC-005', '22 Okt 2025, 13:45', 'PS5',        'Baterai cepat habis','Selesai'],
+        'selesai'  => 'bg-green-200 text-green-800',
+        'diproses' => 'bg-yellow-300 text-yellow-900',
+        'pending'  => 'bg-rose-400 text-white',
     ];
 
     $nf = fn ($n) => number_format($n, 0, ',', '.');
@@ -126,22 +107,23 @@
                 <section class="rounded-lg bg-white p-5 shadow-sm">
                     <div class="flex items-center justify-between gap-3">
                         <h2 class="text-base font-semibold text-slate-900">Kondisi Perangkat</h2>
-                        <select class="w-32 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                            <option>Juni</option><option>Mei</option><option>April</option>
-                        </select>
                     </div>
 
                     <div class="mt-3 flex justify-center">
                         <svg viewBox="0 0 100 100" class="h-40 w-40" role="img" aria-label="Diagram kondisi perangkat">
                             @php $acc = 0; @endphp
-                            @foreach ($kondisi as $k)
-                                @php $len = $k['value'] / $kondisiTotal * $circ; @endphp
-                                <circle cx="50" cy="50" r="40" fill="none" stroke="{{ $k['color'] }}" stroke-width="14"
-                                        stroke-dasharray="{{ round($len, 2) }} {{ round($circ - $len, 2) }}"
-                                        stroke-dashoffset="{{ round(-$acc, 2) }}"
-                                        transform="rotate(-90 50 50)"/>
-                                @php $acc += $len; @endphp
-                            @endforeach
+                            @if($kondisiTotal > 0)
+                                @foreach ($kondisi as $k)
+                                    @php $len = $k['value'] / $kondisiTotal * $circ; @endphp
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="{{ $k['color'] }}" stroke-width="14"
+                                            stroke-dasharray="{{ round($len, 2) }} {{ round($circ - $len, 2) }}"
+                                            stroke-dashoffset="{{ round(-$acc, 2) }}"
+                                            transform="rotate(-90 50 50)"/>
+                                    @php $acc += $len; @endphp
+                                @endforeach
+                            @else
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="14"/>
+                            @endif
                             <text x="50" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#0f172a">{{ $nf($kondisiTotal) }}</text>
                             <text x="50" y="62" text-anchor="middle" font-size="5" fill="#64748b">Total perangkat</text>
                         </svg>
@@ -162,21 +144,19 @@
 
                 {{-- Statistik Tiket (bar) --}}
                 <section class="rounded-lg bg-white p-5 shadow-sm">
-                    <h2 class="text-base font-semibold text-slate-900">Statistik Tiket</h2>
+                    <h2 class="text-base font-semibold text-slate-900">Statistik Tiket Bulanan</h2>
                     <div class="mt-4 flex gap-3">
-                        {{-- Sumbu Y --}}
                         <div class="flex h-44 flex-col justify-between text-[11px] leading-none text-slate-600">
-                            @foreach ([350, 300, 250, 200, 150, 100, 50, 0] as $y)
+                            @foreach ([150, 120, 90, 60, 30, 0] as $y)
                                 <span class="text-right">{{ $y }}</span>
                             @endforeach
                         </div>
-                        {{-- Batang --}}
                         <div class="flex-1">
                             <div class="flex h-44 items-end justify-between border-b border-slate-100 px-1">
                                 @foreach ($chart as [$bulan, $total, $selesai])
                                     <div class="relative h-full w-5" title="{{ $bulan }}: {{ $selesai }} dari {{ $total }} tiket">
-                                        <div class="absolute bottom-0 w-full rounded-sm bg-slate-100" style="height: {{ $total / $chartMax * 100 }}%"></div>
-                                        <div class="absolute bottom-0 left-1/2 w-2.5 -translate-x-1/2 rounded-sm bg-[#10254a]" style="height: {{ $selesai / $chartMax * 100 }}%"></div>
+                                        <div class="absolute bottom-0 w-full rounded-sm bg-slate-100" style="height: {{ ($total / 150) * 100 }}%"></div>
+                                        <div class="absolute bottom-0 left-1/2 w-2.5 -translate-x-1/2 rounded-sm bg-[#10254a]" style="height: {{ ($selesai / 150) * 100 }}%"></div>
                                     </div>
                                 @endforeach
                             </div>
@@ -217,15 +197,6 @@
                         <h2 class="text-xl font-semibold text-slate-900">Tiket Terbaru</h2>
                         <p class="mt-1 text-sm text-slate-500">Menampilkan laporan kerusakan yang baru masuk.</p>
                     </div>
-                    <div class="flex w-full gap-3 lg:w-auto">
-                        <div class="relative flex-1 lg:w-72 lg:flex-none">
-                            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            <input type="text" placeholder="Lakukan Pencarian..." class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm placeholder-slate-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                        </div>
-                        <select class="w-32 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                            <option>Pending</option><option>Diproses</option><option>Selesai</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="mt-5 overflow-x-auto rounded-lg border border-slate-200">
@@ -239,24 +210,29 @@
                             </tr>
                         </thead>
                         <tbody class="text-slate-800">
-                            @foreach ($tiketBaru as [$id, $perangkat, $pelapor, $status])
+                            @forelse ($tiketBaru ?? [] as $t)
+                                @php $st = strtolower($t->status); @endphp
                                 <tr class="border-t border-slate-200">
-                                    <td class="px-6 py-4">{{ $id }}</td>
-                                    <td class="px-6 py-4">{{ $perangkat }}</td>
-                                    <td class="px-6 py-4">{{ $pelapor }}</td>
+                                    <td class="px-6 py-4 font-mono font-semibold">{{ $t->kode_ticket ?? '#TC-00'.$t->id }}</td>
+                                    <td class="px-6 py-4">{{ $t->device->nama_device ?? '-' }}</td>
+                                    <td class="px-6 py-4">{{ $t->user->nama ?? '-' }}</td>
                                     <td class="px-6 py-4">
-                                        <span class="inline-flex items-center gap-2 text-base font-medium {{ $statusDot[$status][0] }}">
-                                            <span class="h-2 w-2 rounded-full {{ $statusDot[$status][1] }}"></span>{{ $status }}
+                                        <span class="inline-flex items-center gap-2 text-base font-medium {{ $statusDot[$st][0] ?? 'text-slate-600' }}">
+                                            <span class="h-2 w-2 rounded-full {{ $statusDot[$st][1] ?? 'bg-slate-400' }}"></span>{{ ucfirst($t->status) }}
                                         </span>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-400">Belum ada tiket masuk.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-[#10254a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0b1b3a]">
+                    <a href="{{ route('admin.tickets.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-[#10254a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0b1b3a]">
                         Lihat Semuanya
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $ic['arrow'] }}"/></svg>
                     </a>
@@ -266,23 +242,7 @@
             {{-- ============ RIWAYAT KERUSAKAN ============ --}}
             <section class="rounded-lg bg-white p-4 shadow-sm sm:p-6">
                 <h2 class="text-xl font-semibold text-slate-900">Riwayat Kerusakan</h2>
-                <p class="mt-1 text-sm text-slate-500">Daftar laporan kerusakan perangkat yang pernah anda buat</p>
-
-                <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_12rem_12rem_9rem]">
-                    <div class="relative sm:col-span-2 lg:col-span-1">
-                        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" placeholder="Cari riwayat kerusakan..." class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm placeholder-slate-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                    </div>
-                    <select class="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                        <option>Pilih Periode</option><option>7 hari terakhir</option><option>30 hari terakhir</option><option>Tahun ini</option>
-                    </select>
-                    <select class="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#10254a]">
-                        <option>Semua Status</option><option>Pending</option><option>Diproses</option><option>Selesai</option>
-                    </select>
-                    <button type="button" class="rounded-lg bg-[#10254a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0b1b3a] sm:col-span-2 lg:col-span-1">
-                        Refresh
-                    </button>
-                </div>
+                <p class="mt-1 text-sm text-slate-500">Daftar laporan kerusakan perangkat terbaru dalam sistem</p>
 
                 <div class="mt-5 overflow-x-auto rounded-lg border border-slate-200">
                     <table class="w-full min-w-[820px] text-left text-sm">
@@ -294,39 +254,28 @@
                                 <th class="px-5 py-3.5 font-medium">Perangkat</th>
                                 <th class="px-5 py-3.5 font-medium">Subjek</th>
                                 <th class="px-5 py-3.5 text-center font-medium">Status</th>
-                                <th class="px-5 py-3.5 text-center font-medium">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-slate-800">
-                            @foreach ($riwayat as $n => [$id, $tanggal, $perangkat, $subjek, $status])
+                            @forelse ($riwayat ?? [] as $n => $r)
+                                @php $st = strtolower($r->status); @endphp
                                 <tr class="border-t border-slate-200">
                                     <td class="px-5 py-4">{{ $n + 1 }}</td>
-                                    <td class="px-5 py-4">
-                                        <a href="#" class="text-blue-600 underline">{{ $id }}</a>
-                                    </td>
-                                    <td class="whitespace-nowrap px-5 py-4">{{ $tanggal }}</td>
-                                    <td class="px-5 py-4">{{ $perangkat }}</td>
-                                    <td class="px-5 py-4">{{ $subjek }}</td>
+                                    <td class="px-5 py-4 font-mono font-semibold text-blue-600">{{ $r->kode_ticket ?? '#TC-00'.$r->id }}</td>
+                                    <td class="whitespace-nowrap px-5 py-4">{{ $r->created_at?->translatedFormat('d M Y, H:i') ?? '-' }}</td>
+                                    <td class="px-5 py-4">{{ $r->device->nama_device ?? '-' }}</td>
+                                    <td class="px-5 py-4">{{ $r->judul ?? '-' }}</td>
                                     <td class="px-5 py-4 text-center">
-                                        <span class="inline-block min-w-[6.5rem] rounded-md px-3 py-2 text-xs font-semibold {{ $statusPill[$status] }}">{{ $status }}</span>
-                                    </td>
-                                    <td class="px-5 py-4 text-center">
-                                        <a href="#" class="inline-flex items-center gap-1.5 rounded-md border border-[#10254a] px-3 py-1.5 text-xs font-semibold text-[#10254a] transition-colors hover:bg-slate-50">
-                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $ic['eye'] }}"/></svg>
-                                            Lihat Detail
-                                        </a>
+                                        <span class="inline-block min-w-[6.5rem] rounded-md px-3 py-2 text-xs font-semibold {{ $statusPill[$st] ?? 'bg-slate-200 text-slate-700' }}">{{ ucfirst($r->status) }}</span>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-5 py-8 text-center text-slate-400">Belum ada riwayat kerusakan.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
-                </div>
-
-                <div class="mt-6 flex justify-end">
-                    <a href="#" class="inline-flex items-center gap-2 rounded-lg bg-[#10254a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0b1b3a]">
-                        Lihat Semuanya
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $ic['arrow'] }}"/></svg>
-                    </a>
                 </div>
             </section>
 

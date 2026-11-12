@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,7 @@ Route::get('/', function (Request $request) {
     return redirect()->route('login');
 })->name('home');
 
+// Rute Publik untuk Scan QR Code Perangkat Berdasarkan Kode Device
 Route::get('/device/{kode_device}', [DeviceController::class, 'showPublic'])->name('device.public');
 
 // ==========================================
@@ -68,11 +70,11 @@ Route::middleware(['auth', 'auth.session'])->group(function (): void {
     // --------------------------------------
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function (): void {
         
-        // Admin Dashboard & Laporan
-        Route::get('/dashboard', fn () => view('admins.dashboard'))->name('dashboard');
+        // Admin Dashboard & Laporan (Memanggil AdminController)
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/history', fn () => view('admins.history'))->name('history.index');
         
-        // Ticket Management (Sementara pakai closure, nanti bisa diubah ke resource controller)
+        // Ticket Management
         Route::get('/ticket', fn () => view('admins.ticket'))->name('tickets.index');
         Route::get('/ticket/detail', fn () => view('admins.detail-ticket'))->name('tickets.show');
 
@@ -80,7 +82,6 @@ Route::middleware(['auth', 'auth.session'])->group(function (): void {
         Route::apiResource('user', UserManagementController::class)->except(['show']);
 
         // Device & Location Management (CRUD Lengkap)
-        // Ini akan otomatis membuat route: index, create, store, edit, update, destroy
         Route::resource('device', DeviceController::class)->except(['show', 'create', 'edit']);
         Route::resource('location', LocationController::class)->except(['show', 'create', 'edit']);
     });

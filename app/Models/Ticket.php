@@ -40,4 +40,9 @@ class Ticket extends Model
     {
         return $this->hasMany(TicketImage::class, 'id_ticket');
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_user'); 
+    }
 }
