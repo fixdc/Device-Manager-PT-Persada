@@ -25,16 +25,16 @@
 
     $menusByRole = [
         'admin' => [
-            ['key' => 'dashboard', 'label' => 'Dashboard',         'href' => '/admin/dashboard', 'icon' => $icons['dashboard']],
-            ['key' => 'device',    'label' => 'Kelola Device',     'href' => '/admin/device', 'icon' => $icons['device']],
-            ['key' => 'user',      'label' => 'Kelola User',       'href' => '/admin/user', 'icon' => $icons['user']],
-            ['key' => 'ticket',    'label' => 'Kelola Ticket',     'href' => '/admin/ticket', 'icon' => $icons['ticket']],
-            ['key' => 'riwayat',   'label' => 'Riwayat Kerusakan', 'href' => '/admin/history', 'icon' => $icons['history']],
+            ['key' => 'dashboard', 'label' => 'Dashboard',         'href' => route('admin.dashboard'), 'icon' => $icons['dashboard']],
+            ['key' => 'device',    'label' => 'Kelola Device',     'href' => route('admin.devices.index'), 'icon' => $icons['device']],
+            ['key' => 'user',      'label' => 'Kelola User',       'href' => route('admin.users.index'), 'icon' => $icons['user']],
+            ['key' => 'ticket',    'label' => 'Kelola Ticket',     'href' => route('admin.tickets.index'), 'icon' => $icons['ticket']],
+            ['key' => 'riwayat',   'label' => 'Riwayat Kerusakan', 'href' => route('admin.history.index'), 'icon' => $icons['history']],
         ],
         'user' => [
-            ['key' => 'dashboard', 'label' => 'Dashboard',       'href' => '/dashboard', 'icon' => $icons['dashboard']],
-            ['key' => 'perangkat', 'label' => 'Perangkat saya',  'href' => '/mydevice', 'icon' => $icons['device']],
-            ['key' => 'tiket',     'label' => 'Tiket Saya',      'href' => '/myticket', 'icon' => $icons['ticket']],
+            ['key' => 'dashboard', 'label' => 'Dashboard',       'href' => route('dashboard'), 'icon' => $icons['dashboard']],
+            ['key' => 'perangkat', 'label' => 'Perangkat saya',  'href' => route('devices.mine'), 'icon' => $icons['device']],
+            ['key' => 'tiket',     'label' => 'Tiket Saya',      'href' => route('tickets.mine'), 'icon' => $icons['ticket']],
         ],
     ];
 
@@ -76,10 +76,13 @@
             @endforeach
 
             {{-- Logout --}}
-            <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-red-600 hover:bg-red-50">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 Logout
-            </a>
+                </button>
+            </form>
         </nav>
     </div>
 

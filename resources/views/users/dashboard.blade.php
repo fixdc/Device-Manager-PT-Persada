@@ -6,7 +6,7 @@
      * DATA DUMMY (frontend only).
      * Nanti ganti dengan data milik user yang login: $userName, $tickets, $activities.
      */
-    $userName = 'Fikri';
+    $userName = auth()->user()->nama;
 
     $tickets = [
         ['id' => '#TC-001', 'device' => 'PC Kantor',  'reporter' => 'Fikri', 'status' => 'Pending'],
