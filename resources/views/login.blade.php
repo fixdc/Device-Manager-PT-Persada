@@ -13,15 +13,20 @@
             
             <h1 class="text-[22px] font-bold text-center text-gray-900 mb-8">Masuk Ke Akunmu</h1>
             <!-- Form -->
-            <form method="POST" action="" class="space-y-5">
+            <form method="POST" action="{{ route('login.store') }}" class="space-y-5">
                 @csrf
+                @if ($errors->any())
+                    <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
 
                 <!-- Email Input -->
                 <div>
                     <label for="email" class="block text-xs font-bold text-gray-700 mb-2 ml-1">
                         Email <span class="text-red-500">*</span>
                     </label>
-                    <input type="email" name="email" id="email" placeholder="refero.design.team@gmail.com" 
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" placeholder="refero.design.team@gmail.com" required autocomplete="username"
                         class="w-full px-5 py-3.5 rounded-full border border-gray-100 bg-white focus:border-[#6F75FF] focus:ring-1 focus:ring-[#6F75FF] outline-none transition-all text-sm text-gray-800 shadow-sm placeholder:text-gray-400">
                 </div>
 
@@ -30,9 +35,14 @@
                     <label for="password" class="block text-xs font-bold text-gray-700 mb-2 ml-1">
                         Kata Sandi <span class="text-red-500">*</span>
                     </label>
-                    <input type="password" name="password" id="password" placeholder="••••••••••••••••"
+                    <input type="password" name="password" id="password" placeholder="••••••••••••••••" required autocomplete="current-password"
                         class="w-full px-5 py-3.5 rounded-full border border-gray-100 bg-white focus:border-[#6F75FF] focus:ring-1 focus:ring-[#6F75FF] outline-none transition-all text-sm text-gray-800 shadow-sm placeholder:text-gray-400">
                 </div>
+
+                <label class="flex items-center gap-2 pl-1 text-xs font-medium text-gray-600">
+                    <input type="checkbox" name="remember" value="1" class="rounded border-gray-300 text-[#14274E] focus:ring-[#14274E]">
+                    Ingat saya
+                </label>
 
                 <!-- Sign In Submit -->
                 <div class="pt-3">

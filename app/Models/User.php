@@ -2,31 +2,57 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable([
+    'nama',
+    'email',
+    'role',
+    'no_telp',
+    'kata_sandi',
+    'id_departemen',
+])]
+#[Hidden(['kata_sandi', 'remember_token'])]
 class User extends Authenticatable
 {
+    public const ROLES = ['admin', 'user'];
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $attributes = [
+        'role' => 'user',
+    ];
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'id_departemen');
+    }
+
+    public function preferences(): HasOne
+    {
+        return $this->hasOne(UserPreference::class);
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'kata_sandi';
+    }
+
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'kata_sandi' => 'hashed',
         ];
     }
 }
