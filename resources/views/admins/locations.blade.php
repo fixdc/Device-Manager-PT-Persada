@@ -68,8 +68,8 @@
                         <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase text-slate-700">
                             <tr>
                                 <th class="px-6 py-4 w-16">No</th>
-                                <th class="px-6 py-4">Nama Departemen / Ruangan</th>
-                                <th class="px-6 py-4">Lantai Gedung</th>
+                                <th class="px-6 py-4">Lokasi</th>
+                                <th class="px-6 py-4">Jumlah Perangkat</th>
                                 <th class="px-6 py-4">Slug Sistem</th>
                                 <th class="px-6 py-4 text-right">Action</th>
                             </tr>
@@ -79,11 +79,9 @@
                                 <tr class="hover:bg-slate-50/50">
                                     <td class="px-6 py-4 font-medium text-slate-900" x-text="index + 1"></td>
                                     <td class="px-6 py-4">
-                                        <div class="font-semibold text-slate-900" x-text="loc.nama"></div>
+                                        <div class="font-semibold text-slate-900" x-text="loc.label"></div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700" x-text="loc.lantai"></span>
-                                    </td>
+                                    <td class="px-6 py-4" x-text="loc.devices_count"></td>
                                     <td class="px-6 py-4 font-mono text-xs text-slate-500" x-text="loc.slug"></td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-2">
@@ -147,7 +145,7 @@
         <div x-show="confirmTarget" @click="confirmTarget = null" class="absolute inset-0 bg-slate-900/50"></div>
         <div x-show="confirmTarget" class="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <h3 class="text-lg font-bold text-slate-900">Konfirmasi Hapus Lokasi</h3>
-            <p class="mt-2 text-sm text-slate-600">Yakin ingin menghapus lokasi <strong x-text="confirmTarget?.nama"></strong>? Tindakan ini tidak dapat dibatalkan jika masih terikat dengan data perangkat atau pengguna.</p>
+            <p class="mt-2 text-sm text-slate-600">Yakin ingin menghapus lokasi <strong x-text="confirmTarget?.label"></strong>? Lokasi yang masih digunakan perangkat atau pengguna tidak dapat dihapus.</p>
             <div class="mt-6 flex justify-end gap-3">
                 <button type="button" @click="confirmTarget = null" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">Batal</button>
                 <button type="button" @click="executeDelete" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">Ya, Hapus</button>
@@ -203,7 +201,10 @@
                         body: JSON.stringify(this.form)
                     });
                     const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || 'Gagal menyimpan data.');
+                    if (!res.ok) {
+                        const validationMessages = Object.values(data.errors || {}).flat();
+                        throw new Error(validationMessages.join(' ') || data.message || 'Gagal menyimpan data.');
+                    }
 
                     if (this.mode === 'add') {
                         this.locations.unshift(data.location);

@@ -44,7 +44,7 @@
 
     $akses = [
         ['Tambah Device', 'Daftarkan perangkat baru', 'plus',    route('admin.device.index')],
-        ['Tambah User',   'Buat akun pengguna baru',   'userAdd', route('admin.user.index')],
+        ['Tambah User',   'Buat akun pengguna baru',   'userAdd', route('admin.users.index')],
         ['Kelola Ticket', 'Periksa laporan kerusakan', 'ticket',  route('admin.tickets.index')],
     ];
 

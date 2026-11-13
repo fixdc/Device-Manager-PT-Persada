@@ -2,20 +2,10 @@
 
 @section('content')
 @php
-    /*
-     * DATA DUMMY (frontend only).
-     * Nanti ganti dengan data dari controller: $devices (perangkat milik user) dan $categories.
-     */
-    $devices = [
-        ['id' => 'DEV-001', 'name' => 'Laptop Acer'],
-        ['id' => 'DEV-002', 'name' => 'Monitor LG 24 Inch UltraGear'],
-        ['id' => 'DEV-003', 'name' => 'Printer Epson L380'],
-    ];
-
     $categories = ['Hardware', 'Software / Aplikasi', 'Jaringan / Internet', 'Printer & Scanner', 'Listrik / Peralatan Pendukung', 'Lainnya'];
 
-    // Tujuan tombol Batal. Ganti dengan route kamu, mis. route('user.tickets.index')
-    $cancelUrl = url('/dashboard');
+    $cancelUrl = route('dashboard');
+    $ticketsUrl = route('tickets.mine');
 
     // Path ikon (Heroicons outline)
     $ic = [
@@ -37,7 +27,7 @@
     $label = 'pt-0 text-xs font-semibold text-slate-800 sm:pt-2.5';
 @endphp
 
-<div x-data="createTicket(@js($cancelUrl))"
+<div x-data="createTicket(@js($cancelUrl), @js($ticketsUrl))"
      @keydown.escape.window="modal = null; sidebarOpen = false"
      class="relative flex h-screen overflow-hidden bg-[#fafafa] text-slate-800">
 
@@ -55,7 +45,7 @@
                     <p class="mt-0.5 text-xs text-slate-500 sm:text-sm">Laporkan kendala atau kerusakan perangkat yang Anda gunakan.</p>
                 </div>
 
-                <form action="#" method="POST" enctype="multipart/form-data" @submit.prevent="submit()" novalidate class="space-y-5">
+                <form x-ref="form" action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data" @submit.prevent="submit($event)" novalidate class="space-y-5">
                     @csrf
 
                     {{-- Perangkat --}}
@@ -69,7 +59,7 @@
                                         class="{{ $field }} appearance-none pl-10 pr-10" :class="errors.device ? 'border-red-400' : 'border-slate-200'">
                                     <option value="" disabled>Pilih perangkat</option>
                                     @foreach ($devices as $device)
-                                        <option value="{{ $device['id'] }}">{{ $device['name'] }} ({{ $device['id'] }})</option>
+                                        <option value="{{ $device->id }}">{{ $device->nama_device }} ({{ $device->kode_device }})</option>
                                     @endforeach
                                 </select>
                                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500">{{ $icon('chevron') }}</span>
@@ -80,13 +70,13 @@
 
                     {{-- Kategori --}}
                     <div class="{{ $row }}">
-                        <label for="category" class="{{ $label }}">Kategori Kerusakan <span class="text-red-500">*</span></label>
+                        <label for="category" class="{{ $label }}">Kategori Kerusakan <span class="font-normal text-slate-400">(Opsional)</span></label>
                         <div>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">{{ $icon('tag') }}</span>
-                                <select id="category" name="category" x-model="form.category" @change="errors.category = ''"
-                                        :aria-invalid="!!errors.category" aria-describedby="err-category"
-                                        class="{{ $field }} appearance-none pl-10 pr-10" :class="errors.category ? 'border-red-400' : 'border-slate-200'">
+                                <select id="category" name="category" x-model="form.category"
+                                        aria-describedby="category-note"
+                                        class="{{ $field }} appearance-none border-slate-200 pl-10 pr-10">
                                     <option value="" disabled>Pilih kategori kerusakan</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category }}">{{ $category }}</option>
@@ -94,7 +84,7 @@
                                 </select>
                                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500">{{ $icon('chevron') }}</span>
                             </div>
-                            <p id="err-category" x-show="errors.category" x-cloak x-text="errors.category" class="mt-1 text-xs text-red-600"></p>
+                            <p id="category-note" class="mt-1 text-xs text-slate-500">Kategori belum dapat disimpan karena kolom kategori laporan belum tersedia di database.</p>
                         </div>
                     </div>
 
@@ -132,7 +122,7 @@
                             <template x-for="u in Object.keys(urgencies)" :key="u">
                                 <label class="flex cursor-pointer items-center gap-2.5 rounded-lg border px-4 py-3.5 shadow-sm transition-colors focus-within:ring-2 focus-within:ring-[#10254a]/40"
                                        :class="form.urgency === u ? urgencies[u].active : 'border-slate-200 bg-white hover:bg-slate-50'">
-                                    <input type="radio" name="urgency" :value="u" x-model="form.urgency" class="sr-only">
+                                    <input type="radio" name="urgency" :value="u" x-model="form.urgency" @change="errors.urgency = ''" :aria-invalid="!!errors.urgency" class="sr-only">
                                     <span class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border bg-white" :class="form.urgency === u ? 'border-[#10254a]' : 'border-slate-300'">
                                         <span x-show="form.urgency === u" class="h-2 w-2 rounded-full bg-[#10254a]"></span>
                                     </span>
@@ -142,6 +132,7 @@
                                     </span>
                                 </label>
                             </template>
+                            <p x-show="errors.urgency" x-cloak x-text="errors.urgency" class="text-xs text-red-600 sm:col-span-3" role="alert"></p>
                         </div>
                     </div>
 
@@ -227,7 +218,7 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('createTicket', (cancelUrl) => ({
+        Alpine.data('createTicket', (cancelUrl, ticketsUrl) => ({
             sidebarOpen: false,
             form: { device: '', category: '', title: '', description: '', urgency: 'Rendah' },
             errors: {},
@@ -242,7 +233,7 @@
             urgencies: {
                 Rendah: { dot: 'bg-emerald-500', active: 'border-emerald-500 bg-emerald-50' },
                 Sedang: { dot: 'bg-amber-500',   active: 'border-amber-400 bg-amber-50' },
-                Urgent: { dot: 'bg-red-500',     active: 'border-red-400 bg-red-50' },
+                Mendesak: { dot: 'bg-red-500',   active: 'border-red-400 bg-red-50' },
             },
 
             get dirty() {
@@ -294,29 +285,73 @@
             validate() {
                 const f = this.form, e = {};
                 if (!f.device)   e.device = 'Pilih perangkat yang bermasalah.';
-                if (!f.category) e.category = 'Pilih kategori kerusakan.';
                 if (!f.title.trim()) e.title = 'Judul laporan wajib diisi.';
                 if (f.description.trim().length < 10) e.description = 'Jelaskan kerusakan minimal 10 karakter.';
                 this.errors = { ...e, photo: this.errors.photo || '' };
                 return Object.keys(e).length === 0 && !this.errors.photo;
             },
 
-            // Frontend saja (simulasi). Nanti: setelah validate() lolos, kirim form ke backend
-            // (mis. $el.closest('form').submit() atau fetch ke route store).
-            submit() {
+            applyBackendErrors(backendErrors) {
+                const fieldMap = {
+                    device_id: 'device',
+                    title: 'title',
+                    description: 'description',
+                    urgency: 'urgency',
+                    photo: 'photo',
+                };
+                const mapped = {};
+
+                for (const [field, messages] of Object.entries(backendErrors)) {
+                    const target = fieldMap[field];
+                    if (target) {
+                        mapped[target] = messages[0];
+                    }
+                }
+
+                if (Object.keys(mapped).length === 0) {
+                    mapped.general = 'Periksa kembali data yang dikirim.';
+                }
+
+                this.errors = { ...this.errors, ...mapped };
+            },
+            async submit(event) {
                 if (this.sending) return;
                 if (!this.validate()) {
                     this.toast('Lengkapi data yang bertanda bintang terlebih dahulu.', 'error');
                     this.$nextTick(() => document.querySelector('[aria-invalid="true"]')?.focus());
                     return;
                 }
+
                 this.sending = true;
-                setTimeout(() => {
-                    const title = this.form.title.trim();
+                try {
+                    const response = await fetch(event.target.action, {
+                        method: 'POST',
+                        body: new FormData(event.target),
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
+                    const data = await response.json();
+
+                    if (response.status === 422) {
+                        this.applyBackendErrors(data.errors || {});
+                        this.toast('Periksa kembali data yang dikirim.', 'error');
+                        this.$nextTick(() => document.querySelector('[aria-invalid="true"]')?.focus());
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Tiket gagal dikirim. Silakan coba lagi.');
+                    }
+
+                    this.toast(`Tiket "${this.form.title.trim()}" berhasil dikirim.`);
+                    window.setTimeout(() => window.location.assign(data.redirect || ticketsUrl), 800);
+                } catch (error) {
+                    this.toast(error instanceof Error ? error.message : 'Tiket gagal dikirim. Silakan coba lagi.', 'error');
+                } finally {
                     this.sending = false;
-                    this.resetForm();
-                    this.toast(`Tiket "${title}" berhasil dikirim.`);
-                }, 900);
+                }
             },
             resetForm() {
                 this.form = { device: '', category: '', title: '', description: '', urgency: 'Rendah' };

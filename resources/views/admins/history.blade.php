@@ -2,26 +2,8 @@
 
 @section('content')
 @php
-    /*
-     * DATA DUMMY (frontend only).
-     * Nanti ganti dengan data dari controller ($records).
-     * Tanggal ditulis tanpa zona waktu (YYYY-MM-DDTHH:mm:ss).
-     */
-    $records = [
-        ['id' => '#TC-001', 'date' => '2025-11-03T14:30:00', 'device' => 'ASUS ROG',             'deviceCode' => 'LAP-ROG-001', 'location' => 'Lantai 3 - Ruang Meeting A', 'subject' => 'Layar berkedip',        'status' => 'Selesai',  'category' => 'Hardware',                       'urgency' => 'Urgent', 'reporter' => 'Andi Pratama',  'division' => 'POKJA - PPDP',           'technician' => 'Siti Aisyah',   'finishedAt' => '2025-11-04T10:15:00', 'complaint' => 'Layar laptop berkedip terus saat dipakai, terutama ketika kecerahan dinaikkan.',       'handling' => 'Kabel fleksibel layar diganti dan driver grafis diperbarui. Layar sudah normal setelah diuji 1 jam.'],
-        ['id' => '#TC-002', 'date' => '2025-11-01T09:15:00', 'device' => 'Epson L3310',          'deviceCode' => 'PRN-EPS-002', 'location' => 'Lantai 2 - Ruang Arsip',     'subject' => 'Tidak bisa ngeprint',  'status' => 'Diproses', 'category' => 'Printer & Scanner',             'urgency' => 'Sedang', 'reporter' => 'Dewi Lestari',  'division' => 'POKJA - PPDP',           'technician' => 'Rina Wulandari','finishedAt' => null,                  'complaint' => 'Printer menyala tetapi dokumen tidak keluar, muncul lampu indikator tinta berkedip.',    'handling' => 'Sedang dilakukan pembersihan head printer dan pengecekan tinta.'],
-        ['id' => '#TC-003', 'date' => '2025-10-28T16:20:00', 'device' => 'PC Server',            'deviceCode' => 'SRV-PC-003',  'location' => 'Ruang Server A',             'subject' => 'Restart sendiri',      'status' => 'Selesai',  'category' => 'Hardware',                       'urgency' => 'Urgent', 'reporter' => 'Budi Santoso',  'division' => 'Keuangan & Logistik',    'technician' => 'Siti Aisyah',   'finishedAt' => '2025-10-29T11:00:00', 'complaint' => 'Server restart sendiri beberapa kali dalam sehari tanpa pesan error.',                'handling' => 'Power supply diganti baru dan dilakukan uji beban selama 2 jam tanpa restart.'],
-        ['id' => '#TC-004', 'date' => '2025-10-25T11:10:00', 'device' => 'Monitor LG',           'deviceCode' => 'MNT-LG-004',  'location' => 'Lantai 6 - Ruang PPDP',      'subject' => 'Layar gelap',          'status' => 'Pending',  'category' => 'Hardware',                       'urgency' => 'Sedang', 'reporter' => 'Rina Anggraini','division' => 'POKJA - PPDP',           'technician' => null,            'finishedAt' => null,                  'complaint' => 'Monitor menyala (lampu indikator hidup) tetapi layar tetap gelap.',                       'handling' => null],
-        ['id' => '#TC-005', 'date' => '2025-10-22T13:45:00', 'device' => 'PS5',                  'deviceCode' => 'GAM-PS5-001', 'location' => 'Lantai 1 - Ruang Rekreasi',  'subject' => 'Baterai cepat habis',  'status' => 'Selesai',  'category' => 'Listrik / Peralatan Pendukung',  'urgency' => 'Rendah', 'reporter' => 'Dewi Puspita',  'division' => 'Operasional Kantor',     'technician' => 'Rina Wulandari','finishedAt' => '2025-10-23T09:30:00', 'complaint' => 'Daya perangkat cepat habis walaupun hanya dipakai sebentar.',                           'handling' => 'Pengaturan daya dioptimalkan dan kabel pengisi daya diganti.'],
-        ['id' => '#TC-006', 'date' => '2025-10-20T08:05:00', 'device' => 'Router Mikrotik RB4011','deviceCode' => 'RTR-MKT-001', 'location' => 'Ruang Server A',             'subject' => 'Internet sering putus','status' => 'Selesai',  'category' => 'Jaringan / Internet',            'urgency' => 'Urgent', 'reporter' => 'Andi Pratama',  'division' => 'POKJA - PPDP',           'technician' => 'Siti Aisyah',   'finishedAt' => '2025-10-20T15:40:00', 'complaint' => 'Koneksi internet putus-putus setiap beberapa menit di seluruh lantai.',                 'handling' => 'Firmware router diperbarui dan konfigurasi channel Wi-Fi disesuaikan.'],
-        ['id' => '#TC-007', 'date' => '2025-10-18T10:25:00', 'device' => 'UPS APC Smart-UPS 1500','deviceCode' => 'UPS-APC-001', 'location' => 'Data Center',                'subject' => 'Alarm bunyi terus',    'status' => 'Diproses', 'category' => 'Listrik / Peralatan Pendukung',  'urgency' => 'Sedang', 'reporter' => 'Budi Santoso',  'division' => 'Keuangan & Logistik',    'technician' => 'Rina Wulandari','finishedAt' => null,                  'complaint' => 'UPS berbunyi terus-menerus dan indikator baterai berwarna merah.',                        'handling' => 'Baterai sedang diuji kapasitasnya, penggantian menunggu persetujuan.'],
-        ['id' => '#TC-008', 'date' => '2025-10-15T14:50:00', 'device' => 'Scanner Canon DR-C240','deviceCode' => 'SCN-CNN-001', 'location' => 'Lantai 3 - Ruang Arsip',     'subject' => 'Hasil scan bergaris',  'status' => 'Selesai',  'category' => 'Printer & Scanner',              'urgency' => 'Rendah', 'reporter' => 'Dewi Lestari',  'division' => 'POKJA - PPDP',           'technician' => 'Siti Aisyah',   'finishedAt' => '2025-10-16T10:00:00', 'complaint' => 'Hasil pindaian selalu muncul garis vertikal di tengah halaman.',                       'handling' => 'Kaca scanner dan roller dibersihkan, kalibrasi ulang dilakukan.'],
-        ['id' => '#TC-009', 'date' => '2025-10-13T09:40:00', 'device' => 'Laptop Acer',          'deviceCode' => 'LAP-ACR-001', 'location' => 'Ruang Meeting A',            'subject' => 'Mati saat dicas',      'status' => 'Pending',  'category' => 'Hardware',                       'urgency' => 'Urgent', 'reporter' => 'Rina Anggraini','division' => 'POKJA - PPDP',           'technician' => null,            'finishedAt' => null,                  'complaint' => 'Laptop mati mendadak setiap kali charger dicolokkan.',                                    'handling' => null],
-        ['id' => '#TC-010', 'date' => '2025-10-10T15:15:00', 'device' => 'AC Ruangan',           'deviceCode' => 'AC-RM-001',   'location' => 'Lantai 2 - Ruang Rapat',     'subject' => 'Tidak dingin',         'status' => 'Selesai',  'category' => 'Listrik / Peralatan Pendukung',  'urgency' => 'Rendah', 'reporter' => 'Dewi Puspita',  'division' => 'Operasional Kantor',     'technician' => 'Rina Wulandari','finishedAt' => '2025-10-11T13:20:00', 'complaint' => 'AC menyala tetapi udara yang keluar tidak dingin.',                                    'handling' => 'Freon ditambah dan filter udara dibersihkan.'],
-    ];
-
-    // Halaman detail lengkap (sementara semua tiket menuju halaman yang sama)
-    $detailUrl = url('/admin/ticket/detail');
+    $detailUrl = route('admin.tickets.show', ['ticket' => '__ID__']);
+    $adminName = auth()->user()->nama;
 
     // Path ikon (Heroicons outline)
     $ic = [
@@ -67,7 +49,7 @@
                 <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <h1 class="text-2xl font-bold text-slate-900 md:text-3xl">Riwayat Kerusakan</h1>
-                        <p class="mt-1 text-sm text-slate-600">Daftar laporan kerusakan perangkat yang pernah anda buat</p>
+                        <p class="mt-1 text-sm text-slate-600">Ringkasan penanganan tiket dari basis data.</p>
                     </div>
                     <button type="button" @click="exportList()" :disabled="filtered.length === 0"
                             class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-[#10254a] bg-white px-4 py-2.5 text-sm font-semibold text-[#10254a] transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
@@ -88,11 +70,10 @@
                         <template x-for="p in periods" :key="p.key"><option :value="p.key" x-text="p.label"></option></template>
                     </select>
 
-                    <select x-model="status" aria-label="Status" class="{{ $selectClass }}">
-                        <option value="">Semua Status</option>
-                        <option>Selesai</option>
-                        <option>Diproses</option>
-                        <option>Pending</option>
+                    <select x-model="status" aria-label="Hasil akhir" class="{{ $selectClass }}">
+                        <option value="">Semua Hasil Akhir</option>
+                        <option>Normal/Berhasil</option>
+                        <option>Rusak</option>
                     </select>
 
                     <button type="button" @click="refresh()" :disabled="refreshing"
@@ -113,15 +94,17 @@
                     </div>
 
                     <div x-show="filtered.length > 0" class="overflow-x-auto">
-                        <table class="w-full min-w-[820px] border-collapse text-left">
+                        <table class="w-full min-w-[1050px] border-collapse text-left">
                             <thead>
                                 <tr class="border-b border-slate-200 bg-[#f1f5f9] text-sm font-semibold text-slate-900">
                                     <th scope="col" class="px-5 py-4 text-center">No</th>
                                     <th scope="col" class="px-5 py-4">ID Tiket</th>
-                                    <th scope="col" class="px-5 py-4">Tanggal Laporan</th>
+                                    <th scope="col" class="px-5 py-4">Tanggal Penyelesaian</th>
                                     <th scope="col" class="px-5 py-4">Perangkat</th>
                                     <th scope="col" class="px-5 py-4">Subjek</th>
-                                    <th scope="col" class="px-5 py-4 text-center">Status</th>
+                                    <th scope="col" class="px-5 py-4">Tindakan</th>
+                                    <th scope="col" class="px-5 py-4 text-center">Hasil Akhir</th>
+                                    <th scope="col" class="px-5 py-4">Teknisi</th>
                                     <th scope="col" class="px-5 py-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -133,12 +116,14 @@
                                             <button type="button" @click="detail = r" x-text="r.id"
                                                     class="rounded font-medium transition-colors hover:text-blue-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#10254a]/40"></button>
                                         </td>
-                                        <td class="whitespace-nowrap px-5 py-4" x-text="fmt(r.date)"></td>
+                                        <td class="whitespace-nowrap px-5 py-4" x-text="fmt(r.finishedAt || r.date)"></td>
                                         <td class="px-5 py-4" x-text="r.device"></td>
                                         <td class="px-5 py-4" x-text="r.subject"></td>
+                                        <td class="max-w-[280px] px-5 py-4 text-slate-600" x-text="r.handling || '-'"></td>
                                         <td class="px-5 py-4 text-center">
-                                            <span class="inline-block min-w-[5.5rem] rounded-md px-3 py-1.5 text-xs font-semibold" :class="statusStyle[r.status]" x-text="r.status"></span>
+                                            <span class="inline-block min-w-[5.5rem] rounded-md px-3 py-1.5 text-xs font-semibold" :class="statusStyle[r.status] || 'bg-slate-100 text-slate-700'" x-text="r.status"></span>
                                         </td>
+                                        <td class="px-5 py-4" x-text="r.technician || 'Belum ditugaskan'"></td>
                                         <td class="px-5 py-4 text-center">
                                             <button type="button" @click="detail = r"
                                                     class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#10254a] px-3.5 py-1.5 text-xs font-semibold text-[#10254a] transition-colors hover:bg-slate-50">
@@ -225,7 +210,7 @@
                         <button type="button" @click="exportDetail()" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[#10254a] px-5 py-2.5 text-sm font-semibold text-[#10254a] hover:bg-slate-50">
                             {{ $icon('pdf') }} Export PDF
                         </button>
-                        <a :href="detailUrl" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#10254a] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#0b1b3a]">
+                        <a :href="detailUrl.replace('__ID__', encodeURIComponent(detail.ticketId))" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#10254a] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#0b1b3a]">
                             {{ $icon('external') }} Halaman Detail
                         </a>
                     </div>
@@ -252,7 +237,7 @@
                 </div>
                 <div class="text-right text-[11px] text-slate-600">
                     <div>Dicetak: <span x-text="printedAt"></span></div>
-                    <div>Oleh: Fikri (Admin)</div>
+                    <div>Oleh: {{ $adminName }} (Admin)</div>
                 </div>
             </div>
 
@@ -263,12 +248,13 @@
                     <tr class="bg-slate-200 font-bold">
                         <th class="border border-slate-400 px-2 py-1.5 text-center">No</th>
                         <th class="border border-slate-400 px-2 py-1.5">ID Tiket</th>
-                        <th class="border border-slate-400 px-2 py-1.5">Tanggal Laporan</th>
+                        <th class="border border-slate-400 px-2 py-1.5">Tanggal Penyelesaian</th>
                         <th class="border border-slate-400 px-2 py-1.5">Perangkat</th>
                         <th class="border border-slate-400 px-2 py-1.5">Subjek</th>
                         <th class="border border-slate-400 px-2 py-1.5">Pelapor</th>
                         <th class="border border-slate-400 px-2 py-1.5">Teknisi</th>
-                        <th class="border border-slate-400 px-2 py-1.5 text-center">Status</th>
+                        <th class="border border-slate-400 px-2 py-1.5">Tindakan</th>
+                        <th class="border border-slate-400 px-2 py-1.5 text-center">Hasil Akhir</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -276,18 +262,19 @@
                         <tr class="break-inside-avoid">
                             <td class="border border-slate-300 px-2 py-1.5 text-center" x-text="i + 1"></td>
                             <td class="border border-slate-300 px-2 py-1.5 font-semibold" x-text="r.id"></td>
-                            <td class="whitespace-nowrap border border-slate-300 px-2 py-1.5" x-text="fmt(r.date)"></td>
+                            <td class="whitespace-nowrap border border-slate-300 px-2 py-1.5" x-text="fmt(r.finishedAt || r.date)"></td>
                             <td class="border border-slate-300 px-2 py-1.5" x-text="r.device"></td>
                             <td class="border border-slate-300 px-2 py-1.5" x-text="r.subject"></td>
                             <td class="border border-slate-300 px-2 py-1.5" x-text="r.reporter"></td>
                             <td class="border border-slate-300 px-2 py-1.5" x-text="r.technician || '-'"></td>
+                            <td class="border border-slate-300 px-2 py-1.5" x-text="r.handling || '-'"></td>
                             <td class="border border-slate-300 px-2 py-1.5 text-center font-semibold" x-text="r.status"></td>
                         </tr>
                     </template>
                 </tbody>
             </table>
 
-            <p class="mt-3 text-[11px] text-slate-700" x-text="`Total ${filtered.length} laporan: ${countBy('Selesai')} selesai, ${countBy('Diproses')} diproses, ${countBy('Pending')} pending.`"></p>
+            <p class="mt-3 text-[11px] text-slate-700" x-text="`Total ${filtered.length} hasil akhir: ${countBy('Normal/Berhasil')} normal/berhasil, ${countBy('Rusak')} rusak.`"></p>
         </div>
 
         {{-- Mode detail satu laporan --}}
@@ -301,7 +288,7 @@
                         </div>
                         <div class="text-right text-[11px] text-slate-600">
                             <div>Dicetak: <span x-text="printedAt"></span></div>
-                            <div>Oleh: Fikri (Admin)</div>
+                            <div>Oleh: {{ $adminName }} (Admin)</div>
                         </div>
                     </div>
 
@@ -364,9 +351,8 @@
             monthsLong:  ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
 
             statusStyle: {
-                Selesai:  'bg-green-100 text-green-700',
-                Diproses: 'bg-yellow-100 text-yellow-700',
-                Pending:  'bg-rose-100 text-rose-600',
+                'Normal/Berhasil': 'bg-emerald-100 text-emerald-700',
+                Rusak: 'bg-rose-100 text-rose-700',
             },
 
             init() {
@@ -402,7 +388,7 @@
                 return this.records.filter(r =>
                     (!this.period || r.date.startsWith(this.period)) &&
                     (!this.status || r.status === this.status) &&
-                    (!q || [r.id, r.device, r.deviceCode, r.subject, r.reporter].some(v => (v || '').toLowerCase().includes(q)))
+                    (!q || [r.id, r.device, r.deviceCode, r.subject, r.reporter, r.technician, r.handling].some(v => (v || '').toLowerCase().includes(q)))
                 );
             },
             get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
@@ -418,25 +404,24 @@
 
             detailFields(r) {
                 return [
-                    { label: 'Tanggal Laporan',  value: this.fmt(r.date) },
-                    { label: 'Perangkat',        value: r.device, sub: `${r.deviceCode} · ${r.location}` },
-                    { label: 'Kategori',         value: r.category },
-                    { label: 'Urgensi',          value: r.urgency },
-                    { label: 'Pelapor',          value: r.reporter, sub: r.division },
-                    { label: 'Teknisi',          value: r.technician || 'Belum ditugaskan' },
-                    { label: 'Tanggal Selesai',  value: r.finishedAt ? this.fmt(r.finishedAt) : 'Belum selesai' },
+                    { label: 'Tanggal Penyelesaian', value: this.fmt(r.finishedAt || r.date) },
+                    { label: 'Perangkat', value: r.device, sub: `${r.deviceCode} · ${r.location}` },
+                    { label: 'Status', value: r.status },
+                    { label: 'Prioritas', value: r.priority },
+                    { label: 'Pelapor', value: r.reporter, sub: r.division },
+                    { label: 'Teknisi', value: r.technician || 'Belum ditugaskan' },
+                    { label: 'Tanggal Penyelesaian', value: r.finishedAt ? this.fmt(r.finishedAt) : 'Belum selesai' },
+                    { label: 'Tindakan', value: r.handling || 'Belum ada catatan penanganan.' },
                 ];
             },
 
             // ---------- Aksi ----------
             resetFilters() { this.search = ''; this.period = ''; this.status = ''; },
 
-            // Frontend saja. Nanti: muat ulang data dari server (mis. window.location.reload()).
             refresh() {
                 if (this.refreshing) return;
                 this.refreshing = true;
-                this.resetFilters();
-                setTimeout(() => { this.refreshing = false; this.toast('Data riwayat diperbarui.'); }, 600);
+                window.location.reload();
             },
 
             toast(msg) {

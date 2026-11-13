@@ -50,7 +50,7 @@
     ];
 
     // Tujuan tombol "Buat Laporan / Ticket" (halaman Buat Tiket)
-    $createUrl = url('/tiket/buat');
+    $createUrl = route('tickets.create');
 
     // Path ikon (Heroicons outline)
     $ic = [
