@@ -30,9 +30,9 @@
 
 <div x-data="usersPage(
         @js($users->items()),
-        @js(route('admin.user.store')),
-        @js(route('admin.user.update', ['user' => '__USER__'])),
-        @js(route('admin.user.destroy', ['user' => '__USER__'])),
+        @js(route('admin.users.store')),
+        @js(route('admin.users.update', ['user' => '__USER__'])),
+        @js(route('admin.users.destroy', ['user' => '__USER__'])),
         @js(csrf_token()),
         @js($search),
         @js($roleFilter),
@@ -63,7 +63,7 @@
 
             {{-- Pencarian, filter, tambah --}}
             <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <form id="user-filters" x-ref="filterForm" action="{{ route('admin.user.index') }}" method="GET" class="relative flex flex-1 sm:max-w-2xl">
+                <form id="user-filters" x-ref="filterForm" action="{{ route('admin.users.index') }}" method="GET" class="relative flex flex-1 sm:max-w-2xl">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">{{ $icon('search') }}</span>
                     <input type="hidden" name="role" :value="roleFilter === 'ALL' ? '' : roleFilter">
                     <input type="search" name="search" x-model="search" value="{{ $search }}" @keydown.enter="$refs.filterForm.requestSubmit()" placeholder="Lakukan pencarian..." class="{{ $input }}">

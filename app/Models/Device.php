@@ -12,6 +12,13 @@ class Device extends Model
     protected $table = 'devices';
     protected $guarded = ['id']; // Membolehkan semua kolom diisi kecuali ID
 
+    protected function casts(): array
+    {
+        return [
+            'tanggal_pengadaan' => 'datetime',
+        ];
+    }
+
     // Relasi ke tabel device_categories
     public function category()
     {

@@ -10,7 +10,7 @@
         'Merek'            => $deviceData['merek'] ?? 'Belum diisi',
         'Model'            => $deviceData['model'] ?? 'Belum diisi',
         'Serial Number'    => $deviceData['sn'] ?? 'Belum diisi',
-        'Lokasi'           => $deviceData['lantai'] ?? '-',
+        'Lokasi'           => $deviceData['lokasi'] ?? '-',
         'Operator Device'  => $deviceData['pj'] ?? 'Belum diisi',
         'Departemen'       => $deviceData['departemen_pj'] ?? 'Belum diisi',
         'Tanggal Pengadaan'=> $deviceData['tanggal'] ?? 'Belum diisi',

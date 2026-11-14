@@ -19,6 +19,7 @@ class LocationController extends Controller
     public function index(Request $request): View
     {
         $locations = Department::query()
+            ->withCount('devices')
             ->orderBy('nama')
             ->get()
             ->map(fn (Department $department): array => $this->locationData($department));
@@ -31,11 +32,11 @@ class LocationController extends Controller
     public function store(Request $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255', Rule::unique('departments')],
+            'nama' => ['required', 'string', 'max:255', Rule::unique('departments')->where(fn ($query) => $query->where('lantai', $request->input('lantai')))],
             'lantai' => ['required', 'string', 'max:255'],
         ]);
 
-        $validated['slug'] = Str::slug($validated['nama']);
+        $validated['slug'] = $this->uniqueSlug($validated['nama'], $validated['lantai']);
 
         $department = Department::create(Arr::only($validated, [
             'nama',
@@ -49,11 +50,11 @@ class LocationController extends Controller
     public function update(Request $request, Department $location): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255', Rule::unique('departments')->ignore($location)],
+            'nama' => ['required', 'string', 'max:255', Rule::unique('departments')->where(fn ($query) => $query->where('lantai', $request->input('lantai')))->ignore($location)],
             'lantai' => ['required', 'string', 'max:255'],
         ]);
 
-        $validated['slug'] = Str::slug($validated['nama']);
+        $validated['slug'] = $this->uniqueSlug($validated['nama'], $validated['lantai'], $location);
 
         $location = DB::transaction(function () use ($location, $validated): Department {
             $location = Department::query()->lockForUpdate()->findOrFail($location->getKey());
@@ -77,8 +78,7 @@ class LocationController extends Controller
         DB::transaction(function () use ($location): void {
             $location = Department::query()->lockForUpdate()->findOrFail($location->getKey());
 
-            if (DB::table('users')->where('id_departemen', $location->getKey())->exists() || 
-                DB::table('devices')->where('id_departemen', $location->getKey())->exists()) {
+            if ($location->devices()->exists() || DB::table('users')->where('id_departemen', $location->getKey())->exists()) {
                 throw ValidationException::withMessages([
                     'location' => 'Lokasi tidak dapat dihapus karena masih digunakan oleh perangkat atau pengguna.',
                 ]);
@@ -106,8 +106,23 @@ class LocationController extends Controller
             'id' => $department->getKey(),
             'nama' => $department->nama,
             'lantai' => $department->lantai,
+            'label' => $department->nama.' — '.$department->lantai,
+            'devices_count' => $department->devices_count ?? $department->devices()->count(),
             'slug' => $department->slug,
         ];
+    }
+
+    private function uniqueSlug(string $nama, string $lantai, ?Department $location = null): string
+    {
+        $base = Str::slug($nama.' '.$lantai);
+        $slug = $base;
+        $suffix = 2;
+
+        while (Department::query()->where('slug', $slug)->when($location, fn ($query) => $query->whereKeyNot($location->getKey()))->exists()) {
+            $slug = $base.'-'.$suffix++;
+        }
+
+        return $slug;
     }
 
     private function respond(

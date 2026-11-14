@@ -155,7 +155,7 @@
 
                             <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
                                 <span x-text="device.tanggal"></span>
-                                <span x-text="`Lokasi: ${device.lantai}`"></span>
+                                <span x-text="`Lokasi: ${device.lokasi}`"></span>
                             </div>
                         </div>
                     </div>
@@ -259,7 +259,7 @@
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Merek</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.merek"></td></tr>
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Model</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.model"></td></tr>
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Serial Number</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.sn"></td></tr>
-                                        <tr><td class="py-2.5 px-3 font-medium text-slate-600">Lokasi</td><td class="py-2.5 px-3 text-slate-900" x-text="`${detail.ruang} (${detail.lantai})`"></td></tr>
+                                        <tr><td class="py-2.5 px-3 font-medium text-slate-600">Lokasi</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.lokasi"></td></tr>
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Operator Device</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.pj"></td></tr>
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Departemen</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.departemen_pj"></td></tr>
                                         <tr><td class="py-2.5 px-3 font-medium text-slate-600">Tanggal Pengadaan</td><td class="py-2.5 px-3 text-slate-900" x-text="detail.tanggal"></td></tr>
@@ -370,7 +370,7 @@
              x-transition:leave-end="opacity-0 scale-95 translate-y-4"
              class="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl">
             
-            <form @submit.prevent="submitForm" class="flex min-h-0 flex-1 flex-col">
+            <form @submit.prevent="submitForm($event)" class="flex min-h-0 flex-1 flex-col">
                 <div class="overflow-y-auto p-6 space-y-4">
                     <h3 class="text-lg font-bold text-slate-900" x-text="mode === 'add' ? 'Tambah Perangkat Baru' : 'Edit Perangkat'"></h3>
                     
@@ -394,13 +394,13 @@
                     {{-- Merek (Memicu Auto-Generate Kode) --}}
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1">Merek</label>
-                        <input type="text" x-model="form.merek" @input="generateDeviceCode()" placeholder="Contoh: Asus / Acer / HP" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
+                        <input type="text" id="device-merek" name="merek" x-model="form.merek" @input="generateDeviceCode()" placeholder="Contoh: Asus / Acer / HP" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
                     </div>
 
                     {{-- Model --}}
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1">Model / Tipe</label>
-                        <input type="text" x-model="form.model" placeholder="Contoh: ROG Strix G15" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
+                        <input type="text" id="device-model" name="model" x-model="form.model" placeholder="Contoh: ROG Strix G15" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
                     </div>
 
                     {{-- Kode Device Otomatis (Format: Kategori3-Merek3-Random3) --}}
@@ -421,7 +421,7 @@
                     {{-- Tanggal Pengadaan --}}
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1">Tanggal Pengadaan</label>
-                        <input type="date" x-model="form.tanggal_pengadaan" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
+                        <input type="date" id="device-tanggal-pengadaan" name="tanggal_pengadaan" x-model="form.tanggal_pengadaan" class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
                     </div>
 
                     {{-- Status --}}
@@ -440,7 +440,7 @@
                         <select x-model="form.id_departemen" required class="w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:ring-2 focus:ring-[#10254a]">
                             <option value="">Pilih Lokasi</option>
                             @foreach ($departments as $dept)
-                                <option value="{{ $dept->id }}">{{ $dept->nama }} ({{ $dept->lantai }})</option>
+                                <option value="{{ $dept->id }}">{{ $dept->nama }} — {{ $dept->lantai }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -654,21 +654,31 @@
                 }, 200);
             },
 
-            async submitForm() {
+            async submitForm(event) {
                 if (this.saving) return;
                 this.saving = true;
 
                 const url = this.mode === 'add' ? storeUrl : updateUrlTpl.replace('__ID__', this.form.id);
                 const method = this.mode === 'add' ? 'POST' : 'PUT';
+                const formData = new FormData(event.currentTarget);
+                const payload = {
+                    ...this.form,
+                    merek: formData.get('merek') ?? '',
+                    model: formData.get('model') ?? '',
+                    tanggal_pengadaan: formData.get('tanggal_pengadaan') ?? '',
+                };
 
                 try {
                     const res = await fetch(url, {
                         method: method,
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                        body: JSON.stringify(this.form)
+                        body: JSON.stringify(payload)
                     });
                     const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || 'Gagal menyimpan.');
+                    if (!res.ok) {
+                        const validationMessages = Object.values(data.errors || {}).flat();
+                        throw new Error(validationMessages.join(' ') || data.message || 'Gagal menyimpan.');
+                    }
 
                     if (this.mode === 'add') {
                         this.devices.unshift(data.device);

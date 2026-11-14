@@ -89,7 +89,7 @@ class DeviceController extends Controller
             'deskripsi' => ['nullable', 'string'],
         ]);
 
-        $device = DB::transaction(function () use ($device, $validated): Device {
+        $deviceId = DB::transaction(function () use ($device, $validated): int {
             $device = Device::query()->lockForUpdate()->findOrFail($device->getKey());
 
             $device->fill(Arr::only($validated, [
@@ -106,15 +106,44 @@ class DeviceController extends Controller
                 'deskripsi',
             ]));
 
-            $device->save();
+            if (! $device->save()) {
+                throw new \RuntimeException('Perubahan perangkat gagal disimpan.');
+            }
 
-            return $device->loadMissing([
-                'category:id,nama,slug', 
-                'user:id,nama,id_departemen,no_telp', 
-                'user.department:id,nama', 
-                'department:id,nama,lantai'
-            ]);
+            return (int) $device->getKey();
         });
+
+        // Build the response from a fresh read after the transaction commits.
+        $device = Device::query()
+            ->with([
+                'category:id,nama,slug',
+                'user:id,nama,id_departemen,no_telp',
+                'user.department:id,nama',
+                'department:id,nama,lantai',
+            ])
+            ->findOrFail($deviceId);
+
+        foreach (['merek', 'model', 'tanggal_pengadaan'] as $field) {
+            if ($request->exists($field) && ! array_key_exists($field, $validated)) {
+                throw new \RuntimeException("Field {$field} tidak lolos ke data tervalidasi.");
+            }
+
+            if (! array_key_exists($field, $validated)) {
+                continue;
+            }
+
+            $expected = $validated[$field];
+            $actual = $device->getAttribute($field);
+
+            if ($field === 'tanggal_pengadaan') {
+                $expected = $expected ? \Carbon\Carbon::parse($expected)->format('Y-m-d') : null;
+                $actual = $actual?->format('Y-m-d');
+            }
+
+            if ($actual !== $expected) {
+                throw new \RuntimeException("Field {$field} tidak sama dengan nilai yang tersimpan.");
+            }
+        }
 
         return $this->respond($request, 'Perubahan perangkat berhasil disimpan.', $device);
     }
@@ -160,9 +189,10 @@ class DeviceController extends Controller
             'sn' => $device->nomor_seri ?? 'Belum diisi',
             'status' => $device->status,
             'tanggal' => $device->tanggal_pengadaan ? \Carbon\Carbon::parse($device->tanggal_pengadaan)->translatedFormat('d F Y') : 'Belum diisi',
-            'tanggal_raw' => $device->tanggal_pengadaan ? \Carbon\Carbon::parse($device->tanggal_pengadaan)->format('Y-m-d') : '',
+            'tanggal_raw' => $device->tanggal_pengadaan?->format('Y-m-d') ?? '',
             'ruang' => $device->department?->nama ?? '-',
             'lantai' => $device->department?->lantai ?? '-',
+            'lokasi' => $device->department ? $device->department->nama.' — '.$device->department->lantai : '-',
             'ruang_id' => $device->id_departemen,
             'pj' => $device->user?->nama ?? 'Belum diisi',
             'departemen_pj' => $device->user?->department?->nama ?? 'Belum diisi',
